@@ -412,7 +412,7 @@
     <div class="poster sticker">
       <span class="star-badge sb1">현상수배</span>
       <span class="star-badge sb2">체감 39.9°</span>
-      <span class="star-badge sb3">단서 22곳 = 명탐정</span>
+      <span class="star-badge sb3">단서 21곳 = 명탐정</span>
       <div class="wanted-arc">WANTED</div>
       <div class="sub-arc">여름 도둑 · SUMMER THIEF</div>
       <div class="chase" role="img" aria-label="호루라기를 불며 쫓아오는 경찰과 도망치는 여름 도둑">
@@ -490,7 +490,7 @@
     </div>
       <h1>40°C를 막던 <em>마지막 0.1°C</em>를<br>훔쳐 달아난 여름 도둑!</h1>
       <p class="story">도둑은 경청지놀 <b>1층부터 7층</b> 곳곳에 시원함을 숨겼다.<br>층마다 남긴 메모를 추리해 <b>진짜 보물 QR</b>을 찾아라.</p>
-      <div class="reward">🎁 보물 7개 → 명예의 전당 등록! · 단서 22개 완집 → 명탐정 승급 등록!</div>
+      <div class="reward">🎁 보물 7개 → 명예의 전당 등록! · 단서 21개 완집 → 명탐정 승급 등록!</div>
       <span style="position:absolute; bottom:5px; right:12px; font-size:.56rem; color:#B9B4C2">빌드 v11</span>
     </div>
     <button class="btn" onclick="openReg()">🕵️ 경청 수사대 — 수사 착수</button>
@@ -597,7 +597,7 @@
   <div id="clBrief" class="sticker" style="display:none; max-width:300px; padding:20px 18px; text-align:center; margin:0 22px">
     <span class="badge">MISSION</span>
     <h3 style="font-family:'Bagel Fat One',cursive; font-size:1.12rem; margin:10px 0 7px; line-height:1.4">각 층에 숨겨진 ❄️<br>시원함의 조각을 찾아라!</h3>
-    <p style="font-size:.78rem; color:#544f66; line-height:1.65; margin-bottom:14px">층마다 <b>1개씩, 총 7개</b>를 되찾으면 도둑 검거!<br>단서 <b>22곳</b>을 전부 확인하면<br><b>명탐정</b>으로 이름이 남는다 👑</p>
+    <p style="font-size:.78rem; color:#544f66; line-height:1.65; margin-bottom:14px">층마다 <b>1개씩, 총 7개</b>를 되찾으면 도둑 검거!<br>단서 <b>21곳</b>을 전부 확인하면<br><b>명탐정</b>으로 이름이 남는다 👑</p>
     <button class="btn" onclick="briefDone()" style="font-size:.98rem; padding:11px">수사 시작 🔍</button>
   </div>
   <div id="tapUI" style="display:none; position:absolute; left:0; right:0; bottom:11dvh; text-align:center; z-index:3">
@@ -641,8 +641,7 @@ const FLOORS = [
    memo:"훔친 0.1°C는 잘 있다. 나는 이 층을 한 바퀴 돌며 흔적을 남겼지 — 전부 찾아내는 자만이 '명탐정'이라 불릴 자격이 있다. 🕶",
    gem:"b7q4",
    qrs:[
-     {c:"p3k7", loc:"쿠드카페", icon:"☕", t:"tip", h:"쿠드카페 — 시원한 음료와 함께 책을 즐길 수 있는 북카페예요.", msg:"아이스아메리카노… 도둑질은 목이 마르거든. 한 잔 하고 갔다."},
-     {c:"f8x2", loc:"쿠드꽃집", icon:"🌸", t:"tip", h:"쿠드꽃집 — 책과 함께 꽃·식물을 만날 수 있는 향기로운 공간이에요.", msg:"꽃향기에 취해 한참 쉬다 갔다. 도둑도 힐링이 필요하거든."},
+     {c:"p3k7", loc:"북카페", icon:"☕", t:"tip", h:"북카페 — 시원한 음료와 꽃·식물이 함께하는 공간에서 책을 즐길 수 있어요.", msg:"아이스아메리카노 한 잔에 꽃향기까지… 도둑도 힐링이 필요하거든. 한참 쉬다 갔다."},
      {c:"d5m9", loc:"안내데스크", icon:"🙋", t:"tip", h:"안내데스크 — 시설 이용·행사 안내는 뭐든 여기서 물어보세요.", msg:"직원분들께 내 행방을 물어봐도 소용없어. 나는 변장의 달인이거든."},
      {c:"c2r6", loc:"주차등록기", icon:"🚗", t:"tip", h:"방문 시 주차등록기에 차량을 등록하면 주차 지원을 받을 수 있어요.", msg:"도주 차량도 주차 등록해야 하나… 잠시 고민했다."},
      {c:"b7q4", loc:"웹툰 북큐레이션", icon:"❄️", t:"gem", h:"웹툰 북큐레이션 — 지금 진행 중인 웹툰 큐레이션 전시 코너예요!", msg:"한 권만 보고 가자 했던 것이 실수였지. 왼쪽 계단을 따라 2층으로 올라와 봐."},
@@ -713,8 +712,9 @@ function loadState(){
   try{
     const d = JSON.parse(localStorage.getItem(SAVE_KEY));
     if(!d || !d.codename) return false;
+    const VALID = new Set(FLOORS.flatMap(f=>f.qrs.map(q=>q.c)));
     state.found = new Set(d.found||[]);
-    state.scanned = new Set(d.scanned||[]);
+    state.scanned = new Set((d.scanned||[]).filter(c=>VALID.has(c)));
     state.unlocked = d.unlocked||1;
     state.codename = d.codename;
     state.clearCode = d.clearCode||'';
