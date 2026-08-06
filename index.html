@@ -1509,7 +1509,7 @@ function pickName(){
   return (t||'무명').slice(0,8);
 }
 function pickTitle(){
-  var total=22;
+  var total=21;
   try{ if(typeof TOTAL_QR==='number'&&TOTAL_QR>0) total=TOTAL_QR; }catch(e){}
   var g=gameState();
   if(g&&g.scanned&&typeof g.scanned.size==='number'&&g.scanned.size>=total)return 1;
@@ -1522,9 +1522,20 @@ function pickTitle(){
   return 0;
 }
 function tName(){return (ST.title?'명탐정 ':'탐정 ')+(ST.name||'무명');}
+function clueCount(){
+  var g=gameState();
+  if(g&&g.scanned&&typeof g.scanned.size==='number') return g.scanned.size;
+  var c=document.getElementById('clueCt');
+  var mm=((c?c.textContent:'')||'').match(/(\d+)\s*\/\s*(\d+)/);
+  return mm?parseInt(mm[1],10):0;
+}
+function clueTotal(){
+  try{ if(typeof TOTAL_QR==='number'&&TOTAL_QR>0) return TOTAL_QR; }catch(e){}
+  return 21;
+}
 function payload(){
   var n='';try{n=btoa(unescape(encodeURIComponent(ST.name||'무명')));}catch(e){n='';}
-  return ['KJN1',ST.title,''+ST.suit+ST.hat+ST.face+ST.item+ST.color,n,ST.id].join('|');
+  return ['KJN1',ST.title,''+ST.suit+ST.hat+ST.face+ST.item+ST.color,n,ST.id,clueCount()+'/'+clueTotal()].join('|');
 }
 
 /* ---------------- 화면 ---------------- */
